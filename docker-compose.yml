@@ -23,9 +23,6 @@ services:
       - .:/opt/CTFd:ro
     depends_on:
       - db
-    networks:
-        default:
-        internal:
 
   nginx:
     image: nginx:stable
@@ -41,9 +38,7 @@ services:
       - "traefik.http.services.cftd.loadbalancer.server.port=80"
     depends_on:
       - ctfd
-    networks:
-      - traefik
-      - internal
+
 
   db:
     image: mariadb:10.4.12
@@ -55,8 +50,7 @@ services:
       - MYSQL_DATABASE=ctfd
     volumes:
       - .data/mysql:/var/lib/mysql
-    networks:
-        internal:
+
     # This command is required to set important mariadb defaults
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
@@ -65,13 +59,9 @@ services:
     restart: always
     volumes:
     - .data/redis:/data
-    networks:
-        internal:
+
 
 networks:
     default:
-    internal:
-        internal: true
-    traefik:
       external: true
       name: traefik
